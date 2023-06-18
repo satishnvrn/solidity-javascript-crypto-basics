@@ -1,0 +1,10 @@
+.yarn
+
+.vscode
+
+node_modules
+
+.gitattributes
+
+*.abi
+*.bin
