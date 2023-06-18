@@ -1,27 +1,45 @@
-import { ContractDeployTransaction, ContractFactory, HDNodeWallet, Provider, Wallet, ethers } from "ethers";
+import {
+  ContractDeployTransaction,
+  ContractFactory,
+  HDNodeWallet,
+  Provider,
+  Wallet,
+  ethers,
+} from 'ethers';
 import * as fs from 'fs-extra';
 import 'dotenv/config';
 
 async function main() {
   const provider: Provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
-  const encryptedKey = fs.readFileSync("./.encryptedKey.json", "utf-8");
+  const encryptedKey = fs.readFileSync('./.encryptedKey.json', 'utf-8');
   // const wallet: Wallet = new ethers.Wallet(
   //   process.env.PRIVATE_KEY,
   //   provider
   // );
-  let wallet: Wallet | HDNodeWallet = await ethers.Wallet.fromEncryptedJsonSync(encryptedKey, process.env.PRIVATE_KEY_PASSWORD);
+  let wallet: Wallet | HDNodeWallet = await ethers.Wallet.fromEncryptedJsonSync(
+    encryptedKey,
+    process.env.PRIVATE_KEY_PASSWORD
+  );
   wallet = await wallet.connect(provider);
 
-  const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf8");
-  const binary = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.bin", "utf-8");
+  const abi = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.abi', 'utf8');
+  const binary = fs.readFileSync(
+    './SimpleStorage_sol_SimpleStorage.bin',
+    'utf-8'
+  );
 
-  const contractFactory: ContractFactory = new ethers.ContractFactory(abi, binary, wallet);
+  const contractFactory: ContractFactory = new ethers.ContractFactory(
+    abi,
+    binary,
+    wallet
+  );
   console.log('deploying, please wait...');
   const contract: any = await contractFactory.deploy();
-  const deploymentReceipt: ContractDeployTransaction = await contract.deploymentTransaction().wait(1);
+  const deploymentReceipt: ContractDeployTransaction = await contract
+    .deploymentTransaction()
+    .wait(1);
   console.log('deploymentReceipt', deploymentReceipt);
-
 
   // console.log('Deployiing contract using plain transaction data!');
   // const nonce = await wallet.getNonce();
